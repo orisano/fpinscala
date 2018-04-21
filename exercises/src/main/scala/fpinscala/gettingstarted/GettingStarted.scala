@@ -156,7 +156,18 @@ object PolymorphicFunctions {
 
   // Exercise 2: Implement a polymorphic function to check whether
   // an `Array[A]` is sorted
-  def isSorted[A](as: Array[A], gt: (A, A) => Boolean): Boolean = ???
+  def isSorted[A](as: Array[A], gt: (A, A) => Boolean): Boolean = {
+    val gte = (x: A, y: A) => gt(x, y) || !gt(y, x)
+
+    @annotation.tailrec
+    def go(i: Int): Boolean = {
+      if (i == 0) true
+      else if (gte(as.apply(i - 1), as.apply(i))) go(i - 1)
+      else false
+    }
+
+    go(as.length - 1)
+  }
 
   // Polymorphic functions are often so constrained by their type
   // that they only have one implementation! Here's an example:
@@ -191,4 +202,17 @@ object PolymorphicFunctions {
 
   def compose[A, B, C](f: B => C, g: A => B): A => C =
     ???
+}
+
+object TestIsSorted {
+
+  import PolymorphicFunctions._
+
+  def main(args: Array[String]): Unit = {
+    println("Expected: true, Actual: %b".format(isSorted(Array[Int](1, 2, 4), (x: Int, y: Int) => x < y)))
+    println("Expected: true, Actual: %b".format(isSorted(Array[Int](1), (x: Int, y: Int) => x < y)))
+    println("Expected: false, Actual: %b".format(isSorted(Array[Int](3, 1), (x: Int, y: Int) => x < y)))
+    println("Expected: false, Actual: %b".format(isSorted(Array[Int](5, 2, 3, 4), (x: Int, y: Int) => x < y)))
+    println("Expected: true, Actual: %b".format(isSorted(Array[Int](1, 2, 2, 4), (x: Int, y: Int) => x < y)))
+  }
 }
