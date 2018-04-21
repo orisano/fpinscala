@@ -55,7 +55,10 @@ object List { // `List` companion object. Contains functions for creating and wo
     case Nil => Nil
   }
 
-  def setHead[A](l: List[A], h: A): List[A] = ???
+  def setHead[A](l: List[A], h: A): List[A] = l match {
+    case Cons(_, tail) => Cons(h, tail)
+    case Nil => Nil
+  }
 
   def drop[A](l: List[A], n: Int): List[A] = ???
 
@@ -87,5 +90,16 @@ object TestTail {
     assert(tail(List(1, 2, 3, 4, 5)) == List(2, 3, 4, 5))
     assert(tail(List(1)) == Nil)
     assert(tail(List()) == Nil)
+  }
+}
+
+object TestSetHead {
+
+  import List.setHead
+
+  def main(args: Array[String]): Unit = {
+    assert(setHead(List(1, 2, 3), 5) == List(5, 2, 3))
+    assert(setHead(List(2), 4) == List(4))
+    assert(setHead(Nil, "foo") == Nil)
   }
 }
