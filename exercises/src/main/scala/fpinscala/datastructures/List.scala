@@ -49,7 +49,6 @@ object List { // `List` companion object. Contains functions for creating and wo
   def product2(ns: List[Double]) =
     foldRight(ns, 1.0)(_ * _) // `_ * _` is more concise notation for `(x,y) => x * y`; see sidebar
 
-
   def tail[A](l: List[A]): List[A] = l match {
     case Cons(_, tail) => tail
     case Nil => Nil
@@ -190,5 +189,33 @@ object TestFoldLeft {
     assert(foldLeft(List(1, 2, 3, 4, 5), 0)(_ + _) == 15)
     assert(foldLeft(Nil: List[Int], 0)(_ + _) == 0)
     assert(foldLeft(List(5), 0)(_ + _) == 5)
+  }
+}
+
+object Exercise3_11 {
+
+  import List.foldLeft
+
+  def sum(l: List[Int]): Int = foldLeft(l, 0)(_ + _)
+
+  def product(l: List[Double]): Double = foldLeft(l, 1.0)(_ * _)
+
+  def length[A](l: List[A]): Int = foldLeft(l, 0)((acc, _) => acc + 1)
+
+  def main(args: Array[String]): Unit = {
+    // sum
+    assert(sum(List(1, 2, 3, 4, 5, 6)) == 21)
+    assert(sum(List()) == 0)
+    assert(sum(List(15)) == 15)
+
+    // product
+    assert(product(List(1.0, 2.0, 3.0, 4.0)) == 24.0)
+    assert(product(List(1.0, 0.0, 3.0, 4.0)) == 0.0)
+    assert(product(List()) == 1.0)
+
+    // length
+    assert(length(List()) == 0)
+    assert(length(List("hello")) == 1)
+    assert(length(List("foo", "bar")) == 2)
   }
 }
