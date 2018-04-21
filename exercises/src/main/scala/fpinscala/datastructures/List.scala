@@ -66,3 +66,12 @@ object List { // `List` companion object. Contains functions for creating and wo
 
   def map[A,B](l: List[A])(f: A => B): List[B] = ???
 }
+
+object TestX {
+
+  import List.x
+
+  def main(args: Array[String]): Unit = {
+    assert(x == 3)
+  }
+}
