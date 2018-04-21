@@ -90,6 +90,8 @@ object List { // `List` companion object. Contains functions for creating and wo
     case Cons(head, tail) => foldLeft(tail, f(z, head))(f)
   }
 
+  def reverse[A](l: List[A]): List[A] = foldLeft(l, Nil: List[A])((acc, x) => append(List(x), acc))
+
   def map[A, B](l: List[A])(f: A => B): List[B] = ???
 }
 
@@ -217,5 +219,17 @@ object Exercise3_11 {
     assert(length(List()) == 0)
     assert(length(List("hello")) == 1)
     assert(length(List("foo", "bar")) == 2)
+  }
+}
+
+object TestReverse {
+
+  import List.reverse
+
+  def main(args: Array[String]): Unit = {
+    assert(reverse(List(1, 2, 3, 4)) == List(4, 3, 2, 1))
+    assert(reverse(List(1, 2, 3)) == List(3, 2, 1))
+    assert(reverse(List(1)) == List(1))
+    assert(reverse(Nil) == Nil)
   }
 }
