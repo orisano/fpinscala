@@ -60,7 +60,14 @@ object List { // `List` companion object. Contains functions for creating and wo
     case Nil => Nil
   }
 
-  def drop[A](l: List[A], n: Int): List[A] = ???
+  @annotation.tailrec
+  def drop[A](l: List[A], n: Int): List[A] = {
+    if (n == 0) l
+    else l match {
+      case Cons(_, tail) => drop(tail, n - 1)
+      case Nil => Nil
+    }
+  }
 
   def dropWhile[A](l: List[A], f: A => Boolean): List[A] = ???
 
@@ -101,5 +108,18 @@ object TestSetHead {
     assert(setHead(List(1, 2, 3), 5) == List(5, 2, 3))
     assert(setHead(List(2), 4) == List(4))
     assert(setHead(Nil, "foo") == Nil)
+  }
+}
+
+object TestDrop {
+
+  import List.drop
+
+  def main(args: Array[String]): Unit = {
+    assert(drop(List(1, 2, 3, 4, 5), 0) == List(1, 2, 3, 4, 5))
+    assert(drop(List(1, 2, 3, 4, 5), 1) == List(2, 3, 4, 5))
+    assert(drop(List(1, 2, 3, 4, 5), 3) == List(4, 5))
+    assert(drop(List(1, 2, 3, 4, 5), 6) == Nil)
+    assert(drop(Nil, 3) == Nil)
   }
 }
