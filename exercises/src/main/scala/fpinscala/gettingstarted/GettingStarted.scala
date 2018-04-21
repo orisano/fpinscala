@@ -184,7 +184,7 @@ object PolymorphicFunctions {
 
   // Exercise 4: Implement `uncurry`
   def uncurry[A, B, C](f: A => B => C): (A, B) => C =
-    ???
+    (a, b) => f(a)(b)
 
   /*
   NB: There is a method on the `Function` object in the standard library,
@@ -224,5 +224,17 @@ object TestCurry {
     assert(curry((a: Int, b: Int) => a + b)(2)(1) == 3)
     assert(curry((a: Int, b: Int) => a / b)(2)(1) == 2)
     assert(curry((a: Int, b: Int) => a / b)(1)(2) == 0)
+  }
+}
+
+object TestUncurry {
+
+  import PolymorphicFunctions._
+
+  def main(args: Array[String]): Unit = {
+    assert(uncurry((a: Int) => (b: Int) => a + b)(1, 2) == 3)
+    assert(uncurry((a: Int) => (b: Int) => a + b)(2, 1) == 3)
+    assert(uncurry((a: Int) => (b: Int) => a / b)(2, 1) == 2)
+    assert(uncurry((a: Int) => (b: Int) => a / b)(1, 2) == 0)
   }
 }
