@@ -157,3 +157,10 @@ object TestInit {
     assert(init(Nil) == Nil)
   }
 }
+
+/*
+Exercise 3.7
+foldRightを使って実装されたproductは0.0を検出しても直ちに中止することは出来ない.
+fにおける零元がある場合のみ零元を返す実装は可能だと思われる.
+ */
+}
