@@ -110,6 +110,8 @@ object List { // `List` companion object. Contains functions for creating and wo
 
   def plusOne(ints: List[Int]): List[Int] = foldRight(ints, List[Int]())((x, acc) => Cons(x + 1, acc))
 
+  def doublesToString(doubles: List[Double]): List[String] = foldRight(doubles, List[String]())((x, acc) => Cons(x.toString, acc))
+
   def map[A, B](l: List[A])(f: A => B): List[B] = ???
 }
 
@@ -316,5 +318,16 @@ object TestPlusOne {
     assert(plusOne(List(1, 2, 3, 4)) == List(2, 3, 4, 5))
     assert(plusOne(List(1)) == List(2))
     assert(plusOne(List()) == List())
+  }
+}
+
+object TestDoublesToString {
+
+  import List.doublesToString
+
+  def main(args: Array[String]): Unit = {
+    assert(doublesToString(List(1.0, 2.0, 3.0)) == List("1.0", "2.0", "3.0"))
+    assert(doublesToString(List(0.5)) == List("0.5"))
+    assert(doublesToString(List()) == List())
   }
 }
