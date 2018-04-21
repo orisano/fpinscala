@@ -69,7 +69,13 @@ object List { // `List` companion object. Contains functions for creating and wo
     }
   }
 
-  def dropWhile[A](l: List[A], f: A => Boolean): List[A] = ???
+  @annotation.tailrec
+  def dropWhile[A](l: List[A], f: A => Boolean): List[A] = l match {
+    case Cons(head, tail) =>
+      if (f(head)) dropWhile(tail, f)
+      else l
+    case Nil => Nil
+  }
 
   def init[A](l: List[A]): List[A] = ???
 
@@ -121,5 +127,17 @@ object TestDrop {
     assert(drop(List(1, 2, 3, 4, 5), 3) == List(4, 5))
     assert(drop(List(1, 2, 3, 4, 5), 6) == Nil)
     assert(drop(Nil, 3) == Nil)
+  }
+}
+
+object TestDropWhile {
+
+  import List.dropWhile
+
+  def main(args: Array[String]): Unit = {
+    assert(dropWhile(List(1, 2, 3, 4, 5), (x: Int) => x < 3) == List(3, 4, 5))
+    assert(dropWhile(List(1, 2, 3, 2, 5), (x: Int) => x < 3) == List(3, 2, 5))
+    assert(dropWhile(List(1, 2, 3, 4, 5), (x: Int) => x < 6) == Nil)
+    assert(dropWhile(Nil, (x: Int) => x < 6) == Nil)
   }
 }
