@@ -85,7 +85,11 @@ object List { // `List` companion object. Contains functions for creating and wo
 
   def length[A](l: List[A]): Int = foldRight(l, 0)((_, acc) => acc + 1)
 
-  def foldLeft[A, B](l: List[A], z: B)(f: (B, A) => B): B = ???
+  @annotation.tailrec
+  def foldLeft[A, B](l: List[A], z: B)(f: (B, A) => B): B = l match {
+    case Nil => z
+    case Cons(head, tail) => foldLeft(tail, f(z, head))(f)
+  }
 
   def map[A, B](l: List[A])(f: A => B): List[B] = ???
 }
@@ -172,5 +176,19 @@ object TestLength {
     assert(length(List(1, 2, 3, 4)) == 4)
     assert(length(List(1)) == 1)
     assert(length(List()) == 0)
+  }
+}
+
+object TestFoldLeft {
+
+  import List.foldLeft
+
+  def main(args: Array[String]): Unit = {
+    assert(foldLeft(List(1, 2, 3, 4, 5), 1)(_ * _) == 120)
+    assert(foldLeft(Nil: List[Int], 1)(_ * _) == 1)
+    assert(foldLeft(List(5), 1)(_ * _) == 5)
+    assert(foldLeft(List(1, 2, 3, 4, 5), 0)(_ + _) == 15)
+    assert(foldLeft(Nil: List[Int], 0)(_ + _) == 0)
+    assert(foldLeft(List(5), 0)(_ + _) == 5)
   }
 }
