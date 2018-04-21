@@ -92,6 +92,8 @@ object List { // `List` companion object. Contains functions for creating and wo
 
   def reverse[A](l: List[A]): List[A] = foldLeft(l, Nil: List[A])((acc, x) => Cons(x, acc))
 
+  def append2[A](a: List[A], b: List[A]): List[A] = reverse(foldLeft(b, reverse(a))((acc, x) => Cons(x, acc)))
+
   def map[A, B](l: List[A])(f: A => B): List[B] = ???
 }
 
@@ -231,5 +233,16 @@ object TestReverse {
     assert(reverse(List(1, 2, 3)) == List(3, 2, 1))
     assert(reverse(List(1)) == List(1))
     assert(reverse(Nil) == Nil)
+  }
+}
+
+object TestAppend2 {
+
+  import List.append2
+
+  def main(args: Array[String]): Unit = {
+    assert(append2(List(1, 2, 3), List(4, 5, 6)) == List(1, 2, 3, 4, 5, 6))
+    assert(append2(List(1, 2, 3), List()) == List(1, 2, 3))
+    assert(append2(List(), List(4, 5, 6)) == List(4, 5, 6))
   }
 }
