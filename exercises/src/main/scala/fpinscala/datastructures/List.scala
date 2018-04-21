@@ -102,6 +102,12 @@ object List { // `List` companion object. Contains functions for creating and wo
 
   def append2[A](a: List[A], b: List[A]): List[A] = reverse(foldLeft(b, reverse(a))((acc, x) => Cons(x, acc)))
 
+  def flatten[A](ls: List[List[A]]): List[A] = {
+    reverse(foldLeft(ls, List[A]())(
+      (acc, l) => foldLeft(l, acc)((b, a) => Cons(a, b))
+    ))
+  }
+
   def map[A, B](l: List[A])(f: A => B): List[B] = ???
 }
 
@@ -283,5 +289,19 @@ object TestAppend2 {
     assert(append2(List(1, 2, 3), List(4, 5, 6)) == List(1, 2, 3, 4, 5, 6))
     assert(append2(List(1, 2, 3), List()) == List(1, 2, 3))
     assert(append2(List(), List(4, 5, 6)) == List(4, 5, 6))
+  }
+}
+
+object TestFlatten {
+
+  import List.flatten
+
+  def main(args: Array[String]): Unit = {
+    assert(flatten(List(List(1, 2, 3), List(4), List(5, 6))) == List(1, 2, 3, 4, 5, 6))
+    assert(flatten(List(List(1, 2, 3), List[Int](), List(5, 6))) == List(1, 2, 3, 5, 6))
+    assert(flatten(List(List(1, 2, 3), List(4), List[Int]())) == List(1, 2, 3, 4))
+    assert(flatten(List(List[Int](), List(4), List(5, 6))) == List(4, 5, 6))
+    assert(flatten(List(List(1, 2, 3))) == List(1, 2, 3))
+    assert(flatten(List()) == Nil)
   }
 }
