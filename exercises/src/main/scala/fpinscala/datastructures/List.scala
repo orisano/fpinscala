@@ -113,6 +113,8 @@ object List { // `List` companion object. Contains functions for creating and wo
   def filter[A](as: List[A])(f: A => Boolean): List[A] = foldRight(as, List[A]())((x, acc) => if (f(x)) Cons(x, acc) else acc)
 
   def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = flatten(map(as)(f))
+
+  def filter2[A](as: List[A])(f: A => Boolean): List[A] = flatMap(as)(x => if (f(x)) List(x) else Nil)
 }
 
 object TestX {
@@ -358,5 +360,15 @@ object TestFlatMap {
 
   def main(args: Array[String]): Unit = {
     assert(flatMap(List(1, 2, 3))(i => List(i, i)) == List(1, 1, 2, 2, 3, 3))
+  }
+}
+
+object TestFilter2 {
+
+  import List.filter2
+
+  def main(args: Array[String]): Unit = {
+    assert(filter2(List(1, 2, 3, 4, 5, 6))(x => x % 2 == 0) == List(2, 4, 6))
+    assert(filter2(List[Int]())(x => x % 2 == 0) == List())
   }
 }
