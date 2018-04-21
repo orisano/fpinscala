@@ -113,6 +113,8 @@ object List { // `List` companion object. Contains functions for creating and wo
   def doublesToString(doubles: List[Double]): List[String] = foldRight(doubles, List[String]())((x, acc) => Cons(x.toString, acc))
 
   def map[A, B](l: List[A])(f: A => B): List[B] = foldRight(l, List[B]())((x, acc) => Cons(f(x), acc))
+
+  def filter[A](as: List[A])(f: A => Boolean): List[A] = foldRight(as, List[A]())((x, acc) => if (f(x)) Cons(x, acc) else acc)
 }
 
 object TestX {
@@ -339,5 +341,15 @@ object TestMap {
   def main(args: Array[String]): Unit = {
     assert(map(List(1, 2, 3, 4, 5))(x => x + 1) == List(2, 3, 4, 5, 6))
     assert(map(List(1, 2, 3, 4, 5))(x => x.toString) == List("1", "2", "3", "4", "5"))
+  }
+}
+
+object TestFilter {
+
+  import List.filter
+
+  def main(args: Array[String]): Unit = {
+    assert(filter(List(1, 2, 3, 4, 5, 6))(x => x % 2 == 0) == List(2, 4, 6))
+    assert(filter(List[Int]())(x => x % 2 == 0) == List())
   }
 }
