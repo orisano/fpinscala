@@ -199,7 +199,7 @@ object PolymorphicFunctions {
   // Exercise 5: Implement `compose`
 
   def compose[A, B, C](f: B => C, g: A => B): A => C =
-    ???
+    a => f(g(a))
 }
 
 object TestIsSorted {
@@ -236,5 +236,15 @@ object TestUncurry {
     assert(uncurry((a: Int) => (b: Int) => a + b)(2, 1) == 3)
     assert(uncurry((a: Int) => (b: Int) => a / b)(2, 1) == 2)
     assert(uncurry((a: Int) => (b: Int) => a / b)(1, 2) == 0)
+  }
+}
+
+object TestCompose {
+
+  import PolymorphicFunctions._
+
+  def main(args: Array[String]): Unit = {
+    assert(compose((a: Int) => a.toString, (b: Int) => b * 2)(1) == "2")
+    assert(compose((a: Int) => a.toString, (b: Int) => b * 2)(2) == "4")
   }
 }
