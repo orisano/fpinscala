@@ -112,7 +112,7 @@ object List { // `List` companion object. Contains functions for creating and wo
 
   def doublesToString(doubles: List[Double]): List[String] = foldRight(doubles, List[String]())((x, acc) => Cons(x.toString, acc))
 
-  def map[A, B](l: List[A])(f: A => B): List[B] = ???
+  def map[A, B](l: List[A])(f: A => B): List[B] = foldRight(l, List[B]())((x, acc) => Cons(f(x), acc))
 }
 
 object TestX {
@@ -329,5 +329,15 @@ object TestDoublesToString {
     assert(doublesToString(List(1.0, 2.0, 3.0)) == List("1.0", "2.0", "3.0"))
     assert(doublesToString(List(0.5)) == List("0.5"))
     assert(doublesToString(List()) == List())
+  }
+}
+
+object TestMap {
+
+  import List.map
+
+  def main(args: Array[String]): Unit = {
+    assert(map(List(1, 2, 3, 4, 5))(x => x + 1) == List(2, 3, 4, 5, 6))
+    assert(map(List(1, 2, 3, 4, 5))(x => x.toString) == List("1", "2", "3", "4", "5"))
   }
 }
