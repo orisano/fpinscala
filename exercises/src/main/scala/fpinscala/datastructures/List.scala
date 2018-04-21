@@ -102,11 +102,7 @@ object List { // `List` companion object. Contains functions for creating and wo
 
   def append2[A](a: List[A], b: List[A]): List[A] = reverse(foldLeft(b, reverse(a))((acc, x) => Cons(x, acc)))
 
-  def flatten[A](ls: List[List[A]]): List[A] = {
-    reverse(foldLeft(ls, List[A]())(
-      (acc, l) => foldLeft(l, acc)((b, a) => Cons(a, b))
-    ))
-  }
+  def flatten[A](ls: List[List[A]]): List[A] = foldRight(ls, List[A]())(append)
 
   def plusOne(ints: List[Int]): List[Int] = foldRight(ints, List[Int]())((x, acc) => Cons(x + 1, acc))
 
@@ -115,6 +111,8 @@ object List { // `List` companion object. Contains functions for creating and wo
   def map[A, B](l: List[A])(f: A => B): List[B] = foldRight(l, List[B]())((x, acc) => Cons(f(x), acc))
 
   def filter[A](as: List[A])(f: A => Boolean): List[A] = foldRight(as, List[A]())((x, acc) => if (f(x)) Cons(x, acc) else acc)
+
+  def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = flatten(map(as)(f))
 }
 
 object TestX {
@@ -351,5 +349,14 @@ object TestFilter {
   def main(args: Array[String]): Unit = {
     assert(filter(List(1, 2, 3, 4, 5, 6))(x => x % 2 == 0) == List(2, 4, 6))
     assert(filter(List[Int]())(x => x % 2 == 0) == List())
+  }
+}
+
+object TestFlatMap {
+
+  import List.flatMap
+
+  def main(args: Array[String]): Unit = {
+    assert(flatMap(List(1, 2, 3))(i => List(i, i)) == List(1, 1, 2, 2, 3, 3))
   }
 }
