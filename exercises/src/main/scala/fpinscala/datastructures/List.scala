@@ -83,7 +83,7 @@ object List { // `List` companion object. Contains functions for creating and wo
     case Nil => Nil
   }
 
-  def length[A](l: List[A]): Int = ???
+  def length[A](l: List[A]): Int = foldRight(l, 0)((_, acc) => acc + 1)
 
   def foldLeft[A, B](l: List[A], z: B)(f: (B, A) => B): B = ???
 
@@ -163,4 +163,14 @@ Exercise 3.7
 foldRightを使って実装されたproductは0.0を検出しても直ちに中止することは出来ない.
 fにおける零元がある場合のみ零元を返す実装は可能だと思われる.
  */
+
+object TestLength {
+
+  import List.length
+
+  def main(args: Array[String]): Unit = {
+    assert(length(List(1, 2, 3, 4)) == 4)
+    assert(length(List(1)) == 1)
+    assert(length(List()) == 0)
+  }
 }
