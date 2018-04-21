@@ -77,7 +77,11 @@ object List { // `List` companion object. Contains functions for creating and wo
     case Nil => Nil
   }
 
-  def init[A](l: List[A]): List[A] = ???
+  def init[A](l: List[A]): List[A] = l match {
+    case Cons(_, Nil) => Nil
+    case Cons(head, tail) => Cons(head, init(tail))
+    case Nil => Nil
+  }
 
   def length[A](l: List[A]): Int = ???
 
@@ -139,5 +143,17 @@ object TestDropWhile {
     assert(dropWhile(List(1, 2, 3, 2, 5), (x: Int) => x < 3) == List(3, 2, 5))
     assert(dropWhile(List(1, 2, 3, 4, 5), (x: Int) => x < 6) == Nil)
     assert(dropWhile(Nil, (x: Int) => x < 6) == Nil)
+  }
+}
+
+object TestInit {
+
+  import List.init
+
+  def main(args: Array[String]): Unit = {
+    assert(init(List(1, 2, 3, 4)) == List(1, 2, 3))
+    assert(init(List(1, 2, 3, 4, 5)) == List(1, 2, 3, 4))
+    assert(init(List(4)) == Nil)
+    assert(init(Nil) == Nil)
   }
 }
