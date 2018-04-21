@@ -90,7 +90,7 @@ object List { // `List` companion object. Contains functions for creating and wo
     case Cons(head, tail) => foldLeft(tail, f(z, head))(f)
   }
 
-  def reverse[A](l: List[A]): List[A] = foldLeft(l, Nil: List[A])((acc, x) => append(List(x), acc))
+  def reverse[A](l: List[A]): List[A] = foldLeft(l, Nil: List[A])((acc, x) => Cons(x, acc))
 
   def map[A, B](l: List[A])(f: A => B): List[B] = ???
 }
