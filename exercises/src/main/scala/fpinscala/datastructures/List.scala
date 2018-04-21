@@ -108,6 +108,8 @@ object List { // `List` companion object. Contains functions for creating and wo
     ))
   }
 
+  def plusOne(ints: List[Int]): List[Int] = foldRight(ints, List[Int]())((x, acc) => Cons(x + 1, acc))
+
   def map[A, B](l: List[A])(f: A => B): List[B] = ???
 }
 
@@ -303,5 +305,16 @@ object TestFlatten {
     assert(flatten(List(List[Int](), List(4), List(5, 6))) == List(4, 5, 6))
     assert(flatten(List(List(1, 2, 3))) == List(1, 2, 3))
     assert(flatten(List()) == Nil)
+  }
+}
+
+object TestPlusOne {
+
+  import List.plusOne
+
+  def main(args: Array[String]): Unit = {
+    assert(plusOne(List(1, 2, 3, 4)) == List(2, 3, 4, 5))
+    assert(plusOne(List(1)) == List(2))
+    assert(plusOne(List()) == List())
   }
 }
