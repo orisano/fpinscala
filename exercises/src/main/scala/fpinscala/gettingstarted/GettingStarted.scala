@@ -178,7 +178,7 @@ object PolymorphicFunctions {
   // Note that `=>` associates to the right, so we could
   // write the return type as `A => B => C`
   def curry[A, B, C](f: (A, B) => C): A => (B => C) =
-    ???
+    (a: A) => (b: B) => f(a, b)
 
   // NB: The `Function2` trait has a `curried` method already
 
@@ -212,5 +212,17 @@ object TestIsSorted {
     println("Expected: false, Actual: %b".format(isSorted(Array[Int](3, 1), (x: Int, y: Int) => x > y)))
     println("Expected: false, Actual: %b".format(isSorted(Array[Int](5, 2, 3, 4), (x: Int, y: Int) => x > y)))
     println("Expected: true, Actual: %b".format(isSorted(Array[Int](1, 2, 2, 4), (x: Int, y: Int) => x > y)))
+  }
+}
+
+object TestCurry {
+
+  import PolymorphicFunctions._
+
+  def main(args: Array[String]): Unit = {
+    assert(curry((a: Int, b: Int) => a + b)(1)(2) == 3)
+    assert(curry((a: Int, b: Int) => a + b)(2)(1) == 3)
+    assert(curry((a: Int, b: Int) => a / b)(2)(1) == 2)
+    assert(curry((a: Int, b: Int) => a / b)(1)(2) == 0)
   }
 }
