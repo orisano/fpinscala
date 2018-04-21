@@ -92,7 +92,13 @@ object List { // `List` companion object. Contains functions for creating and wo
 
   def reverse[A](l: List[A]): List[A] = foldLeft(l, Nil: List[A])((acc, x) => Cons(x, acc))
 
-  def reverse2[A](l: List[A]): List[A] = foldRight(l, List[A]())((x, acc) => append(acc, List(x)))
+  def foldLeft2[A, B](l: List[A], z: B)(f: (B, A) => B): B = {
+    foldRight(l, (b: B) => b)((a, g) => b => g(f(b, a)))(z)
+  }
+
+  def foldRight2[A, B](l: List[A], z: B)(f: (A, B) => B): B = {
+    foldLeft(reverse(l), z)((a, b) => f(b, a))
+  }
 
   def append2[A](a: List[A], b: List[A]): List[A] = reverse(foldLeft(b, reverse(a))((acc, x) => Cons(x, acc)))
 
@@ -195,6 +201,7 @@ object TestFoldLeft {
     assert(foldLeft(List(1, 2, 3, 4, 5), 0)(_ + _) == 15)
     assert(foldLeft(Nil: List[Int], 0)(_ + _) == 0)
     assert(foldLeft(List(5), 0)(_ + _) == 5)
+    assert(foldLeft(List(1, 2, 3, 4), List[Int]())((acc, x) => Cons(x, acc)) == List(4, 3, 2, 1))
   }
 }
 
@@ -238,15 +245,33 @@ object TestReverse {
   }
 }
 
-object TestReverse2 {
+object TestFoldLeft2 {
 
-  import List.reverse2
+  import List.foldLeft2
 
   def main(args: Array[String]): Unit = {
-    assert(reverse2(List(1, 2, 3, 4)) == List(4, 3, 2, 1))
-    assert(reverse2(List(1, 2, 3)) == List(3, 2, 1))
-    assert(reverse2(List(1)) == List(1))
-    assert(reverse2(Nil) == Nil)
+    assert(foldLeft2(List(1, 2, 3, 4, 5), 1)(_ * _) == 120)
+    assert(foldLeft2(Nil: List[Int], 1)(_ * _) == 1)
+    assert(foldLeft2(List(5), 1)(_ * _) == 5)
+    assert(foldLeft2(List(1, 2, 3, 4, 5), 0)(_ + _) == 15)
+    assert(foldLeft2(Nil: List[Int], 0)(_ + _) == 0)
+    assert(foldLeft2(List(5), 0)(_ + _) == 5)
+    assert(foldLeft2(List(1, 2, 3, 4), List[Int]())((acc, x) => Cons(x, acc)) == List(4, 3, 2, 1))
+  }
+}
+
+object TestFoldRight2 {
+
+  import List.foldRight2
+
+  def main(args: Array[String]): Unit = {
+    assert(foldRight2(List(1, 2, 3, 4, 5), 1)(_ * _) == 120)
+    assert(foldRight2(Nil: List[Int], 1)(_ * _) == 1)
+    assert(foldRight2(List(5), 1)(_ * _) == 5)
+    assert(foldRight2(List(1, 2, 3, 4, 5), 0)(_ + _) == 15)
+    assert(foldRight2(Nil: List[Int], 0)(_ + _) == 0)
+    assert(foldRight2(List(5), 0)(_ + _) == 5)
+    assert(foldRight2(List(1, 2, 3, 4), List[Int]())(Cons[Int]) == List(1, 2, 3, 4))
   }
 }
 
