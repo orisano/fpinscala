@@ -50,7 +50,10 @@ object List { // `List` companion object. Contains functions for creating and wo
     foldRight(ns, 1.0)(_ * _) // `_ * _` is more concise notation for `(x,y) => x * y`; see sidebar
 
 
-  def tail[A](l: List[A]): List[A] = ???
+  def tail[A](l: List[A]): List[A] = l match {
+    case Cons(_, tail) => tail
+    case Nil => Nil
+  }
 
   def setHead[A](l: List[A], h: A): List[A] = ???
 
@@ -73,5 +76,16 @@ object TestX {
 
   def main(args: Array[String]): Unit = {
     assert(x == 3)
+  }
+}
+
+object TestTail {
+
+  import List.tail
+
+  def main(args: Array[String]): Unit = {
+    assert(tail(List(1, 2, 3, 4, 5)) == List(2, 3, 4, 5))
+    assert(tail(List(1)) == Nil)
+    assert(tail(List()) == Nil)
   }
 }
