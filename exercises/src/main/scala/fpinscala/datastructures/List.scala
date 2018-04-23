@@ -123,6 +123,14 @@ object List { // `List` companion object. Contains functions for creating and wo
       case (Cons(a, at), Cons(b, bt)) => Cons(a + b, listAdd(at, bt))
     }
   }
+
+  def zipWith[A, B, C](as: List[A], bs: List[B])(f: (A, B) => C): List[C] = {
+    (as, bs) match {
+      case (Nil, _) => Nil
+      case (_, Nil) => Nil
+      case (Cons(a, at), Cons(b, bt)) => Cons(f(a, b), zipWith(at, bt)(f))
+    }
+  }
 }
 
 object TestX {
@@ -391,5 +399,23 @@ object TestListAdd {
     assert(listAdd(List(1, 2, 3, 4), List()) == List())
     assert(listAdd(List(1, 2, 3, 4), List(10, 1)) == List(11, 3))
     assert(listAdd(List(1, 2), List(5, 6, 7)) == List(6, 8))
+  }
+}
+
+object TestZipWith {
+
+  import List.zipWith
+
+  def main(args: Array[String]): Unit = {
+    assert(zipWith(List(1, 2, 3, 4), List(2, 1, 5, 3))((a, b) => a + b) == List(3, 3, 8, 7))
+    assert(zipWith(List[Int](), List(2, 1, 5, 3))((a, b) => a + b) == List())
+    assert(zipWith(List(1, 2, 3, 4), List[Int]())((a, b) => a + b) == List())
+    assert(zipWith(List(1, 2, 3, 4), List(10, 1))((a, b) => a + b) == List(11, 3))
+    assert(zipWith(List(1, 2), List(5, 6, 7))((a, b) => a + b) == List(6, 8))
+
+    assert(zipWith(List("1", "2"), List("5", "6"))((a, b) => a + b) == List("15", "26"))
+    assert(zipWith(List(1, 2), List(5, 6, 7))((a, b) => a * b) == List(5, 12))
+    assert(zipWith(List(1, 2), List("a", "b"))((a, b) => a.toString + b) == List("1a", "2b"))
+
   }
 }
