@@ -131,6 +131,23 @@ object List { // `List` companion object. Contains functions for creating and wo
       case (Cons(a, at), Cons(b, bt)) => Cons(f(a, b), zipWith(at, bt)(f))
     }
   }
+
+  def startsWith[A](as: List[A], bs: List[A]): Boolean = {
+    (as, bs) match {
+      case (_, Nil) => true
+      case (Cons(a, at), Cons(b, bt)) if a == b => startsWith(at, bt)
+      case _ => false
+    }
+  }
+
+  def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean = {
+    (sup, sub) match {
+      case (_, Nil) => true
+      case (Nil, _) => false
+      case (Cons(a, as), Cons(b, bs)) if a == b && startsWith(as, bs) => true
+      case (Cons(_, as), bs) => hasSubsequence(as, bs)
+    }
+  }
 }
 
 object TestX {
@@ -417,5 +434,17 @@ object TestZipWith {
     assert(zipWith(List(1, 2), List(5, 6, 7))((a, b) => a * b) == List(5, 12))
     assert(zipWith(List(1, 2), List("a", "b"))((a, b) => a.toString + b) == List("1a", "2b"))
 
+  }
+}
+
+object TestHasSubsequence {
+
+  import List.hasSubsequence
+
+  def main(args: Array[String]): Unit = {
+    assert(hasSubsequence(List(1, 2, 3, 4), List(1, 2)))
+    assert(hasSubsequence(List(1, 2, 3, 4), List(2, 3)))
+    assert(hasSubsequence(List(1, 2, 3, 4), List(4)))
+    assert(!hasSubsequence(List(1, 2, 3, 4), List(2, 4)))
   }
 }
