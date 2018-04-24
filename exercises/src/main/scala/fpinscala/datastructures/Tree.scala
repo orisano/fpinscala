@@ -15,6 +15,11 @@ object Tree {
     case Branch(l, r) => maximum(l) max maximum(r)
     case Leaf(v) => v
   }
+
+  def depth[A](t: Tree[A]): Int = t match {
+    case Leaf(_) => 1
+    case Branch(l, r) => depth(l).max(depth(r)) + 1
+  }
 }
 
 object TestSize {
@@ -36,5 +41,17 @@ object TestMaximum {
     assert(maximum(Leaf(100)) == 100)
     assert(maximum(Branch(Leaf(100), Branch(Leaf(10), Leaf(10000)))) == 10000)
     assert(maximum(Branch(Leaf(5), Leaf(10))) == 10)
+  }
+}
+
+object TestDepth {
+
+  import Tree.depth
+
+  def main(args: Array[String]): Unit = {
+    assert(depth(Leaf(1)) == 1)
+    assert(depth(Branch(Leaf(1), Branch(Leaf(2), Leaf(3)))) == 3)
+    assert(depth(Branch(Branch(Leaf(1), Leaf(2)), Leaf(3))) == 3)
+    assert(depth(Branch(Leaf(1), Branch(Leaf(2), Branch(Leaf(3), Branch(Leaf(4), Leaf(5)))))) == 5)
   }
 }
