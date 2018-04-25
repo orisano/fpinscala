@@ -20,6 +20,11 @@ object Tree {
     case Leaf(_) => 1
     case Branch(l, r) => depth(l).max(depth(r)) + 1
   }
+
+  def map[A, B](t: Tree[A])(f: (A) => B): Tree[B] = t match {
+    case Leaf(x) => Leaf(f(x))
+    case Branch(l, r) => Branch(map(l)(f), map(r)(f))
+  }
 }
 
 object TestSize {
@@ -53,5 +58,16 @@ object TestDepth {
     assert(depth(Branch(Leaf(1), Branch(Leaf(2), Leaf(3)))) == 3)
     assert(depth(Branch(Branch(Leaf(1), Leaf(2)), Leaf(3))) == 3)
     assert(depth(Branch(Leaf(1), Branch(Leaf(2), Branch(Leaf(3), Branch(Leaf(4), Leaf(5)))))) == 5)
+  }
+}
+
+object TestMap {
+
+  import Tree.map
+
+  def main(args: Array[String]): Unit = {
+    assert(map(Leaf(1))(x => x.toString) == Leaf("1"))
+    assert(map(Branch(Leaf(1), Leaf(2)))(2.*) == Branch(Leaf(2), Leaf(4)))
+    assert(map(Branch(Leaf(1), Branch(Leaf(2), Leaf(3))))(4.*) == Branch(Leaf(4), Branch(Leaf(8), Leaf(12))))
   }
 }
