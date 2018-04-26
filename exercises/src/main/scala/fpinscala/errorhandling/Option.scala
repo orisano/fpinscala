@@ -75,7 +75,9 @@ object Option {
 
   def variance(xs: Seq[Double]): Option[Double] = mean(xs).flatMap(m => mean(xs.map(x => math.pow(x - m, 2))))
 
-  def map2[A, B, C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = ???
+  def map2[A, B, C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = {
+    a.flatMap(x => b.map(y => f(x, y)))
+  }
 
   def sequence[A](a: List[Option[A]]): Option[List[A]] = ???
 
@@ -89,5 +91,17 @@ object TestVariance {
   def main(args: Array[String]): Unit = {
     assert(variance(List(1.0, 2.0, 3.0)).filter(x => math.abs(x - 1.0) < 1e9) != None)
     assert(variance(List()) == None)
+  }
+}
+
+object TestMap2 {
+
+  import Option.map2
+
+  def main(args: Array[String]): Unit = {
+    assert(map2(Some("s"), Some(2))((a, b) => a * b) == Some("ss"))
+    assert(map2(Some("s"), None: Option[Int])((a, b) => a * b) == None)
+    assert(map2(None: Option[String], Some(2))((a, b) => a * b) == None)
+    assert(map2(None: Option[String], None: Option[Int])((a, b) => a * b) == None)
   }
 }
