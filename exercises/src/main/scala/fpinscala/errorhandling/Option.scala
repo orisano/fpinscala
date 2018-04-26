@@ -73,11 +73,21 @@ object Option {
     if (xs.isEmpty) None
     else Some(xs.sum / xs.length)
 
-  def variance(xs: Seq[Double]): Option[Double] = ???
+  def variance(xs: Seq[Double]): Option[Double] = mean(xs).flatMap(m => mean(xs.map(x => math.pow(x - m, 2))))
 
   def map2[A, B, C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = ???
 
   def sequence[A](a: List[Option[A]]): Option[List[A]] = ???
 
   def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = ???
+}
+
+object TestVariance {
+
+  import Option.variance
+
+  def main(args: Array[String]): Unit = {
+    assert(variance(List(1.0, 2.0, 3.0)).filter(x => math.abs(x - 1.0) < 1e9) != None)
+    assert(variance(List()) == None)
+  }
 }
