@@ -81,7 +81,7 @@ object Option {
 
   def sequence[A](a: List[Option[A]]): Option[List[A]] = a.foldRight(Some(Nil): Option[List[A]])((x, acc) => map2(x, acc)((a, b) => a :: b))
 
-  def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = ???
+  def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = a.foldRight[Option[List[B]]](Some(Nil))((x, acc) => map2(f(x), acc)(_ :: _))
 }
 
 object TestVariance {
@@ -116,5 +116,19 @@ object TestSequence {
     assert(sequence(List(Some(1), None, Some(5), Some(7))) == None)
     assert(sequence(List(Some(1), Some(3), None, Some(7))) == None)
     assert(sequence(List(Some(1), Some(3), Some(5), None)) == None)
+  }
+}
+
+object TestTraverse {
+
+  import Option.traverse
+
+  def main(args: Array[String]): Unit = {
+    assert(traverse(List(1, 2, 3, 4, 5))(Some(_)) == Some(List(1, 2, 3, 4, 5)))
+    assert(traverse(List(1, 2, 3, 4, 5))(x => if (x == 1) None else Some(x)) == None)
+    assert(traverse(List(1, 2, 3, 4, 5))(x => if (x == 2) None else Some(x)) == None)
+    assert(traverse(List(1, 2, 3, 4, 5))(x => if (x == 3) None else Some(x)) == None)
+    assert(traverse(List(1, 2, 3, 4, 5))(x => if (x == 4) None else Some(x)) == None)
+    assert(traverse(List(1, 2, 3, 4, 5))(x => if (x == 5) None else Some(x)) == None)
   }
 }
