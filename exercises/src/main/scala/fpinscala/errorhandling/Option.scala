@@ -79,7 +79,7 @@ object Option {
     a.flatMap(x => b.map(y => f(x, y)))
   }
 
-  def sequence[A](a: List[Option[A]]): Option[List[A]] = ???
+  def sequence[A](a: List[Option[A]]): Option[List[A]] = a.foldRight(Some(Nil): Option[List[A]])((x, acc) => map2(x, acc)((a, b) => a :: b))
 
   def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = ???
 }
@@ -103,5 +103,18 @@ object TestMap2 {
     assert(map2(Some("s"), None: Option[Int])((a, b) => a * b) == None)
     assert(map2(None: Option[String], Some(2))((a, b) => a * b) == None)
     assert(map2(None: Option[String], None: Option[Int])((a, b) => a * b) == None)
+  }
+}
+
+object TestSequence {
+
+  import Option.sequence
+
+  def main(args: Array[String]): Unit = {
+    assert(sequence(List(Some(1), Some(3), Some(5), Some(7))) == Some(List(1, 3, 5, 7)))
+    assert(sequence(List(None, Some(3), Some(5), Some(7))) == None)
+    assert(sequence(List(Some(1), None, Some(5), Some(7))) == None)
+    assert(sequence(List(Some(1), Some(3), None, Some(7))) == None)
+    assert(sequence(List(Some(1), Some(3), Some(5), None)) == None)
   }
 }
