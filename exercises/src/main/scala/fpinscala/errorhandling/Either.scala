@@ -48,9 +48,12 @@ object TestEither {
 }
 
 object Either {
-  def traverse[E, A, B](es: List[A])(f: A => Either[E, B]): Either[E, List[B]] = ???
+  def traverse[E, A, B](es: List[A])(f: A => Either[E, B]): Either[E, List[B]] = es match {
+    case Nil => Right(Nil)
+    case h :: t => f(h).flatMap(x => traverse(t)(f).map(y => x :: y))
+  }
 
-  def sequence[E, A](es: List[Either[E, A]]): Either[E, List[A]] = ???
+  def sequence[E, A](es: List[Either[E, A]]): Either[E, List[A]] = traverse(es)(x => x)
 
   def mean(xs: IndexedSeq[Double]): Either[String, Double] =
     if (xs.isEmpty)
@@ -70,4 +73,34 @@ object Either {
       case e: Exception => Left(e)
     }
 
+}
+
+object TestTraverse {
+
+  import Either.traverse
+
+  def main(args: Array[String]): Unit = {
+    assert(traverse(List(1, 2, 3, 4, 5, 6))(x => Right(x)) == Right(List(1, 2, 3, 4, 5, 6)))
+    assert(traverse(List(1, 2, 3, 4, 5, 6))(x => if (x == 1) Left("error") else Right(x)) == Left("error"))
+    assert(traverse(List(1, 2, 3, 4, 5, 6))(x => if (x == 2) Left("error") else Right(x)) == Left("error"))
+    assert(traverse(List(1, 2, 3, 4, 5, 6))(x => if (x == 3) Left("error") else Right(x)) == Left("error"))
+    assert(traverse(List(1, 2, 3, 4, 5, 6))(x => if (x == 4) Left("error") else Right(x)) == Left("error"))
+    assert(traverse(List(1, 2, 3, 4, 5, 6))(x => if (x == 5) Left("error") else Right(x)) == Left("error"))
+    assert(traverse(List(1, 2, 3, 4, 5, 6))(x => if (x == 6) Left("error") else Right(x)) == Left("error"))
+    assert(traverse(List(1, 2, 3, 4, 5, 6))(x => if (x % 2 == 1) Left("error" + x.toString) else Right(x)) == Left("error1"))
+  }
+}
+
+object TestSequence {
+
+  import Either.sequence
+
+  def main(args: Array[String]): Unit = {
+    assert(sequence(List(Right(1), Right(2), Right(3), Right(4))) == Right(List(1, 2, 3, 4)))
+    assert(sequence(List(Left("error"), Right(2), Right(3), Right(4))) == Left("error"))
+    assert(sequence(List(Right(1), Left("error"), Right(3), Right(4))) == Left("error"))
+    assert(sequence(List(Right(1), Right(2), Left("error"), Right(4))) == Left("error"))
+    assert(sequence(List(Right(1), Right(2), Right(3), Left("error"))) == Left("error"))
+    assert(sequence(List(Right(1), Left("error1"), Right(3), Left("error2"))) == Left("error1"))
+  }
 }
