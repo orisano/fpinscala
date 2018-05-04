@@ -36,7 +36,10 @@ trait Stream[+A] {
     case _ => this
   }
 
-  def takeWhile(p: A => Boolean): Stream[A] = ???
+  def takeWhile(p: A => Boolean): Stream[A] = this match {
+    case Cons(h, t) if p(h()) => cons(h(), t().takeWhile(p))
+    case _ => Empty
+  }
 
   def forAll(p: A => Boolean): Boolean = ???
 
@@ -67,6 +70,15 @@ object TestDrop {
     assert(cons(1, cons(2, cons(3, Empty))).drop(2).toList == List(3))
     assert(cons(1, cons(2, cons(3, Empty))).drop(0).toList == List(1, 2, 3))
     assert(cons(1, cons(2, cons(3, Empty))).drop(4).toList == Nil)
+  }
+}
+
+object TestTakeWhile {
+
+  def main(args: Array[String]): Unit = {
+    assert(cons(1, cons(2, cons(3, Empty))).takeWhile(x => x < 3).toList == List(1, 2))
+    assert(cons(1, cons(2, cons(3, Empty))).takeWhile(x => x < 4).toList == List(1, 2, 3))
+    assert(cons(1, cons(2, cons(3, Empty))).takeWhile(x => x < 0).toList == Nil)
   }
 }
 
