@@ -41,7 +41,7 @@ trait Stream[+A] {
     case _ => Empty
   }
 
-  def forAll(p: A => Boolean): Boolean = ???
+  def forAll(p: A => Boolean): Boolean = foldRight(true)((x, acc) => p(x) && acc)
 
   def headOption: Option[A] = ???
 
@@ -79,6 +79,18 @@ object TestTakeWhile {
     assert(cons(1, cons(2, cons(3, Empty))).takeWhile(x => x < 3).toList == List(1, 2))
     assert(cons(1, cons(2, cons(3, Empty))).takeWhile(x => x < 4).toList == List(1, 2, 3))
     assert(cons(1, cons(2, cons(3, Empty))).takeWhile(x => x < 0).toList == Nil)
+  }
+}
+
+object TestForAll {
+
+  def raise(): Int = {
+    sys.error("raise")
+  }
+
+  def main(args: Array[String]): Unit = {
+    assert(cons(1, cons(2, Empty)).forAll(3 >= _))
+    assert(!cons(1, cons(2, cons(raise(), Empty))).forAll(1 >= _))
   }
 }
 
