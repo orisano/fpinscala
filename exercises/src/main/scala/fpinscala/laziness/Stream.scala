@@ -43,7 +43,7 @@ trait Stream[+A] {
 
   def forAll(p: A => Boolean): Boolean = foldRight(true)((x, acc) => p(x) && acc)
 
-  def headOption: Option[A] = ???
+  def headOption: Option[A] = foldRight[Option[A]](None)((x, _) => Some(x))
 
   // 5.7 map, filter, append, flatmap using foldRight. Part of the exercise is
   // writing your own function signatures.
@@ -91,6 +91,15 @@ object TestForAll {
   def main(args: Array[String]): Unit = {
     assert(cons(1, cons(2, Empty)).forAll(3 >= _))
     assert(!cons(1, cons(2, cons(raise(), Empty))).forAll(1 >= _))
+  }
+}
+
+object TestHeadOption {
+
+  def main(args: Array[String]): Unit = {
+    assert(Empty.headOption.isEmpty)
+    assert(cons(1, Empty).headOption.contains(1))
+    assert(cons(1, cons(2, Empty)).headOption.contains(1))
   }
 }
 
