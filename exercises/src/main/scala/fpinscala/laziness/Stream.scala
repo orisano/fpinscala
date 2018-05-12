@@ -52,7 +52,7 @@ trait Stream[+A] {
 
   def filter(f: (A => Boolean)): Stream[A] = foldRight[Stream[A]](Empty)((x, acc) => if (f(x)) cons(x, acc) else acc)
 
-  def append[AA >: A](s: => Stream[AA]): Stream[AA] = foldRight(s)(cons)
+  def append[AA >: A](s: => Stream[AA]): Stream[AA] = foldRight(s)((x, acc) => cons(x, acc))
 
   def flatMap[B](f: A => Stream[B]): Stream[B] = foldRight[Stream[B]](Empty)((x, acc) => f(x).append(acc))
 
