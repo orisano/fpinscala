@@ -111,6 +111,13 @@ object TestHeadOption {
   }
 }
 
+object TestMap {
+
+  def main(args: Array[String]): Unit = {
+    assert(cons(1, cons(2, cons(3, Empty))).map(_.toString).toList == List("1", "2", "3"))
+  }
+}
+
 object Stream {
   def cons[A](hd: => A, tl: => Stream[A]): Stream[A] = {
     lazy val head = hd
