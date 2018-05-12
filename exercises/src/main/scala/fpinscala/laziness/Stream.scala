@@ -136,6 +136,15 @@ object TestAppend {
   }
 }
 
+object TestFlatMap {
+
+  def main(args: Array[String]): Unit = {
+    assert(cons(1, cons(2, cons(3, Empty))).flatMap(x => cons(x, cons(x, Empty))).toList == List(1, 1, 2, 2, 3, 3))
+    assert(Empty.flatMap(x => cons(x, cons(x, Empty))).toList == List())
+    assert(cons(1, cons(2, cons(3, Empty))).flatMap(x => Empty).toList == List())
+  }
+}
+
 object Stream {
   def cons[A](hd: => A, tl: => Stream[A]): Stream[A] = {
     lazy val head = hd
