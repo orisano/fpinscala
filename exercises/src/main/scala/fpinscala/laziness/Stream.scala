@@ -127,6 +127,15 @@ object TestFilter {
   }
 }
 
+object TestAppend {
+
+  def main(args: Array[String]): Unit = {
+    assert(cons(1, cons(2, cons(3, Empty))).append(cons(4, cons(5, Empty))).toList == List(1, 2, 3, 4, 5))
+    assert(Empty.append(cons(4, cons(5, Empty))).toList == List(4, 5))
+    assert(cons(1, cons(2, cons(3, Empty))).append(Empty).toList == List(1, 2, 3))
+  }
+}
+
 object Stream {
   def cons[A](hd: => A, tl: => Stream[A]): Stream[A] = {
     lazy val head = hd
