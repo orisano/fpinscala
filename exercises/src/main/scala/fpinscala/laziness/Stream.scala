@@ -118,6 +118,15 @@ object TestMap {
   }
 }
 
+object TestFilter {
+
+  def main(args: Array[String]): Unit = {
+    assert(cons(1, cons(2, cons(3, Empty))).filter(_ % 2 == 0).toList == List(2))
+    assert(cons(1, cons(2, cons(3, Empty))).filter(_ % 2 == 1).toList == List(1, 3))
+    assert(cons(1, cons(2, cons(3, Empty))).filter(_ > 5).toList == List())
+  }
+}
+
 object Stream {
   def cons[A](hd: => A, tl: => Stream[A]): Stream[A] = {
     lazy val head = hd
