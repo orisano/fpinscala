@@ -165,7 +165,18 @@ object Stream {
     tail
   }
 
-  def from(n: Int): Stream[Int] = ???
+  def from(n: Int): Stream[Int] = cons(n, from(n + 1))
 
   def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = ???
+}
+
+object TestFrom {
+
+  import Stream.from
+
+  def main(args: Array[String]): Unit = {
+    assert(from(5).take(3).toList == List(5, 6, 7))
+    assert(from(-1).take(1) == List(-1))
+  }
+
 }
