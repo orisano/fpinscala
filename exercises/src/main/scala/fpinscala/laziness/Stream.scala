@@ -176,7 +176,7 @@ object TestFrom {
 
   def main(args: Array[String]): Unit = {
     assert(from(5).take(3).toList == List(5, 6, 7))
-    assert(from(-1).take(1) == List(-1))
+    assert(from(-1).take(1).toList == List(-1))
   }
 
 }
