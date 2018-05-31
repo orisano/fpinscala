@@ -167,6 +167,11 @@ object Stream {
 
   def from(n: Int): Stream[Int] = cons(n, from(n + 1))
 
+  def fibs: Stream[Int] = {
+    def f(a: Int, b: Int): Stream[Int] = cons(a, f(b, a + b))
+    f(0, 1)
+  }
+
   def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = ???
 }
 
@@ -179,4 +184,14 @@ object TestFrom {
     assert(from(-1).take(1).toList == List(-1))
   }
 
+}
+
+object TestFib {
+
+  import Stream.fibs
+
+  def main(args: Array[String]): Unit = {
+    assert(fibs.take(1).toList == List(0))
+    assert(fibs.take(7).toList == List(0, 1, 1, 2, 3, 5, 8))
+  }
 }
