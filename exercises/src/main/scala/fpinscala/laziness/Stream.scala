@@ -172,7 +172,9 @@ object Stream {
     f(0, 1)
   }
 
-  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = ???
+  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = {
+    f(z).map(t => cons(t._1, unfold(t._2)(f))).getOrElse[Stream[A]](Empty)
+  }
 }
 
 object TestFrom {
@@ -193,5 +195,15 @@ object TestFib {
   def main(args: Array[String]): Unit = {
     assert(fibs.take(1).toList == List(0))
     assert(fibs.take(7).toList == List(0, 1, 1, 2, 3, 5, 8))
+  }
+}
+
+object TestUnfold {
+
+  import Stream.unfold
+
+  def main(args: Array[String]): Unit = {
+    assert(unfold((0, 1))(s => Some(s._1, (s._2, s._1 + s._2))).take(1).toList == List(0))
+    assert(unfold((0, 1))(s => Some(s._1, (s._2, s._1 + s._2))).take(7).toList == List(0, 1, 1, 2, 3, 5, 8))
   }
 }
