@@ -169,12 +169,23 @@ object Stream {
 
   def fibs: Stream[Int] = {
     def f(a: Int, b: Int): Stream[Int] = cons(a, f(b, a + b))
+
     f(0, 1)
   }
 
   def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = {
     f(z).map(t => cons(t._1, unfold(t._2)(f))).getOrElse[Stream[A]](Empty)
   }
+
+  def fibs2: Stream[Int] = unfold((0, 1)) {
+    case (x, y) => Some(x, (y, x + y))
+  }
+
+  def from2(n: Int): Stream[Int] = unfold(n)(x => Some(x, x + 1))
+
+  def constant2[A](a: A): Stream[A] = unfold(a)(x => Some(x, x))
+
+  def ones2: Stream[Int] = unfold(1)(_ => Some(1, 1))
 }
 
 object TestFrom {
@@ -205,5 +216,45 @@ object TestUnfold {
   def main(args: Array[String]): Unit = {
     assert(unfold((0, 1))(s => Some(s._1, (s._2, s._1 + s._2))).take(1).toList == List(0))
     assert(unfold((0, 1))(s => Some(s._1, (s._2, s._1 + s._2))).take(7).toList == List(0, 1, 1, 2, 3, 5, 8))
+  }
+}
+
+object TestFib2 {
+
+  import Stream.fibs2
+
+  def main(args: Array[String]): Unit = {
+    assert(fibs2.take(1).toList == List(0))
+    assert(fibs2.take(7).toList == List(0, 1, 1, 2, 3, 5, 8))
+  }
+}
+
+object TestFrom2 {
+
+  import Stream.from2
+
+  def main(args: Array[String]): Unit = {
+    assert(from2(5).take(3).toList == List(5, 6, 7))
+    assert(from2(-1).take(1).toList == List(-1))
+  }
+}
+
+object TestConstant2 {
+
+  import Stream.constant2
+
+  def main(args: Array[String]): Unit = {
+    assert(constant2(1).take(1).toList == List(1))
+    assert(constant2("a").take(5).toList == List("a", "a", "a", "a", "a"))
+  }
+}
+
+object TestOnes2 {
+
+  import Stream.ones2
+
+  def main(args: Array[String]): Unit = {
+    assert(ones2.take(1).toList == List(1))
+    assert(ones2.take(5).toList == List(1, 1, 1, 1, 1))
   }
 }
