@@ -56,6 +56,33 @@ trait Stream[+A] {
 
   def flatMap[B](f: A => Stream[B]): Stream[B] = foldRight[Stream[B]](Empty)((x, acc) => f(x).append(acc))
 
+  def map2[B](f: (A) => B): Stream[B] = Stream.unfold(this) {
+    case Cons(hd, tl) => Some((f(hd()), tl()))
+    case Empty => None
+  }
+
+  def take2(n: Int): Stream[A] = Stream.unfold((this, n)) {
+    case (Cons(hd, tl), x) if x > 0 => Some((hd(), (tl(), x - 1)))
+    case _ => None
+  }
+
+  def takeWhile2(p: (A) => Boolean): Stream[A] = unfold(this) {
+    case Cons(hd, tl) if p(hd()) => Some(hd(), tl())
+    case _ => None
+  }
+
+  def zipWith[B, C](s2: Stream[B])(f: (A, B) => C): Stream[C] = unfold((this, s2)) {
+    case (Cons(ah, at), Cons(bh, bt)) => Some((f(ah(), bh()), (at(), bt())))
+    case _ => None
+  }
+
+  def zipAll[B](s2: Stream[B]): Stream[(Option[A], Option[B])] = unfold((this, s2)) {
+    case (Empty, Empty) => None
+    case (Cons(h, t), Empty) => Some(((Some(h()), None), (t(), Empty)))
+    case (Empty, Cons(h, t)) => Some(((None, Some(h())), (Empty, t())))
+    case (Cons(ah, at), Cons(bh, bt)) => Some(((Some(ah()), Some(bh())), (at(), bt())))
+  }
+
   def startsWith[B](s: Stream[B]): Boolean = ???
 }
 
@@ -142,6 +169,64 @@ object TestFlatMap {
     assert(cons(1, cons(2, cons(3, Empty))).flatMap(x => cons(x, cons(x, Empty))).toList == List(1, 1, 2, 2, 3, 3))
     assert(Empty.flatMap(x => cons(x, cons(x, Empty))).toList == List())
     assert(cons(1, cons(2, cons(3, Empty))).flatMap(x => Empty).toList == List())
+  }
+}
+
+object TestMap2 {
+
+  def main(args: Array[String]): Unit = {
+    assert(cons(1, cons(2, cons(3, Empty))).map2(_.toString).toList == List("1", "2", "3"))
+    assert(cons(1, cons(2, cons(3, Empty))).map2(_ * 2).toList == List(2, 4, 6))
+  }
+}
+
+object TestTake2 {
+
+  def main(args: Array[String]): Unit = {
+    assert(cons(1, cons(2, cons(3, Empty))).take2(2).toList == List(1, 2))
+    assert(cons(1, cons(2, cons(3, Empty))).take2(0).toList == Nil)
+    assert(cons(1, cons(2, cons(3, Empty))).take2(4).toList == List(1, 2, 3))
+  }
+}
+
+object TestTakeWhile2 {
+
+  def main(args: Array[String]): Unit = {
+    assert(cons(1, cons(2, cons(3, Empty))).takeWhile2(x => x < 3).toList == List(1, 2))
+    assert(cons(1, cons(2, cons(3, Empty))).takeWhile2(x => x < 4).toList == List(1, 2, 3))
+    assert(cons(1, cons(2, cons(3, Empty))).takeWhile2(x => x < 0).toList == Nil)
+  }
+}
+
+object TestZipWith {
+
+  def main(args: Array[String]): Unit = {
+    assert(cons(1, cons(2, cons(3, Empty))).zipWith(
+      cons(4, cons(6, cons(8, Empty)))
+    )(_ + _).toList == List(5, 8, 11))
+    assert(cons(1, cons(2, cons(3, Empty))).zipWith(
+      cons(4, cons(6, Empty))
+    )(_ + _).toList == List(5, 8))
+    assert(cons(1, cons(2, Empty)).zipWith(
+      cons(4, cons(6, cons(8, Empty)))
+    )(_ + _).toList == List(5, 8))
+  }
+}
+
+object TestZipAll {
+
+  def main(args: Array[String]): Unit = {
+    assert(cons(1, cons(2, cons(3, Empty))).zipAll(
+      cons(4, cons(6, cons(8, Empty)))
+    ).toList == List((Some(1), Some(4)), (Some(2), Some(6)), (Some(3), Some(8))))
+
+    assert(cons(1, cons(2, Empty)).zipAll(
+      cons(4, cons(6, cons(8, Empty)))
+    ).toList == List((Some(1), Some(4)), (Some(2), Some(6)), (None, Some(8))))
+
+    assert(cons(1, cons(2, cons(3, Empty))).zipAll(
+      cons(4, cons(6, Empty))
+    ).toList == List((Some(1), Some(4)), (Some(2), Some(6)), (Some(3), None)))
   }
 }
 
