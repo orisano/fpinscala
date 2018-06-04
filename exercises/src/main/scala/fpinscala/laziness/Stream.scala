@@ -95,18 +95,18 @@ case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
 object TestTake {
 
   def main(args: Array[String]): Unit = {
-    assert(cons(1, cons(2, cons(3, Empty))).take(2).toList == List(1, 2))
-    assert(cons(1, cons(2, cons(3, Empty))).take(0).toList == Nil)
-    assert(cons(1, cons(2, cons(3, Empty))).take(4).toList == List(1, 2, 3))
+    assert(Stream(1, 2, 3).take(2).toList == List(1, 2))
+    assert(Stream(1, 2, 3).take(0).toList == Nil)
+    assert(Stream(1, 2, 3).take(4).toList == List(1, 2, 3))
   }
 }
 
 object TestDrop {
 
   def main(args: Array[String]): Unit = {
-    assert(cons(1, cons(2, cons(3, Empty))).drop(2).toList == List(3))
-    assert(cons(1, cons(2, cons(3, Empty))).drop(0).toList == List(1, 2, 3))
-    assert(cons(1, cons(2, cons(3, Empty))).drop(4).toList == Nil)
+    assert(Stream(1, 2, 3).drop(2).toList == List(3))
+    assert(Stream(1, 2, 3).drop(0).toList == List(1, 2, 3))
+    assert(Stream(1, 2, 3).drop(4).toList == Nil)
   }
 }
 
