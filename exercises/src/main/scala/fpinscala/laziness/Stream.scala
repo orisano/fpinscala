@@ -135,100 +135,86 @@ object TestHeadOption {
 
   def main(args: Array[String]): Unit = {
     assert(Empty.headOption.isEmpty)
-    assert(cons(1, Empty).headOption.contains(1))
-    assert(cons(1, cons(2, Empty)).headOption.contains(1))
+    assert(Stream(1).headOption.contains(1))
+    assert(Stream(1, 2).headOption.contains(1))
   }
 }
 
 object TestMap {
 
   def main(args: Array[String]): Unit = {
-    assert(cons(1, cons(2, cons(3, Empty))).map(_.toString).toList == List("1", "2", "3"))
+    assert(Stream(1, 2, 3).map(_.toString).toList == List("1", "2", "3"))
   }
 }
 
 object TestFilter {
 
   def main(args: Array[String]): Unit = {
-    assert(cons(1, cons(2, cons(3, Empty))).filter(_ % 2 == 0).toList == List(2))
-    assert(cons(1, cons(2, cons(3, Empty))).filter(_ % 2 == 1).toList == List(1, 3))
-    assert(cons(1, cons(2, cons(3, Empty))).filter(_ > 5).toList == List())
+    assert(Stream(1, 2, 3).filter(_ % 2 == 0).toList == List(2))
+    assert(Stream(1, 2, 3).filter(_ % 2 == 1).toList == List(1, 3))
+    assert(Stream(1, 2, 3).filter(_ > 5).toList == Nil)
   }
 }
 
 object TestAppend {
 
   def main(args: Array[String]): Unit = {
-    assert(cons(1, cons(2, cons(3, Empty))).append(cons(4, cons(5, Empty))).toList == List(1, 2, 3, 4, 5))
-    assert(Empty.append(cons(4, cons(5, Empty))).toList == List(4, 5))
-    assert(cons(1, cons(2, cons(3, Empty))).append(Empty).toList == List(1, 2, 3))
+    assert(Stream(1, 2, 3).append(Stream(4, 5)).toList == List(1, 2, 3, 4, 5))
+    assert(Empty.append(Stream(4, 5)).toList == List(4, 5))
+    assert(Stream(1, 2, 3).append(Empty).toList == List(1, 2, 3))
   }
 }
 
 object TestFlatMap {
 
   def main(args: Array[String]): Unit = {
-    assert(cons(1, cons(2, cons(3, Empty))).flatMap(x => cons(x, cons(x, Empty))).toList == List(1, 1, 2, 2, 3, 3))
-    assert(Empty.flatMap(x => cons(x, cons(x, Empty))).toList == List())
-    assert(cons(1, cons(2, cons(3, Empty))).flatMap(x => Empty).toList == List())
+    assert(Stream(1, 2, 3).flatMap(x => Stream(x, x)).toList == List(1, 1, 2, 2, 3, 3))
+    assert(Empty.flatMap(x => Stream(x, x)).toList == Nil)
+    assert(Stream(1, 2, 3).flatMap(x => Empty).toList == Nil)
   }
 }
 
 object TestMap2 {
 
   def main(args: Array[String]): Unit = {
-    assert(cons(1, cons(2, cons(3, Empty))).map2(_.toString).toList == List("1", "2", "3"))
-    assert(cons(1, cons(2, cons(3, Empty))).map2(_ * 2).toList == List(2, 4, 6))
+    assert(Stream(1, 2, 3).map2(_.toString).toList == List("1", "2", "3"))
+    assert(Stream(1, 2, 3).map2(_ * 2).toList == List(2, 4, 6))
   }
 }
 
 object TestTake2 {
 
   def main(args: Array[String]): Unit = {
-    assert(cons(1, cons(2, cons(3, Empty))).take2(2).toList == List(1, 2))
-    assert(cons(1, cons(2, cons(3, Empty))).take2(0).toList == Nil)
-    assert(cons(1, cons(2, cons(3, Empty))).take2(4).toList == List(1, 2, 3))
+    assert(Stream(1, 2, 3).take2(2).toList == List(1, 2))
+    assert(Stream(1, 2, 3).take2(0).toList == Nil)
+    assert(Stream(1, 2, 3).take2(4).toList == List(1, 2, 3))
   }
 }
 
 object TestTakeWhile2 {
 
   def main(args: Array[String]): Unit = {
-    assert(cons(1, cons(2, cons(3, Empty))).takeWhile2(x => x < 3).toList == List(1, 2))
-    assert(cons(1, cons(2, cons(3, Empty))).takeWhile2(x => x < 4).toList == List(1, 2, 3))
-    assert(cons(1, cons(2, cons(3, Empty))).takeWhile2(x => x < 0).toList == Nil)
+    assert(Stream(1, 2, 3).takeWhile2(x => x < 3).toList == List(1, 2))
+    assert(Stream(1, 2, 3).takeWhile2(x => x < 4).toList == List(1, 2, 3))
+    assert(Stream(1, 2, 3).takeWhile2(x => x < 0).toList == Nil)
   }
 }
 
 object TestZipWith {
 
   def main(args: Array[String]): Unit = {
-    assert(cons(1, cons(2, cons(3, Empty))).zipWith(
-      cons(4, cons(6, cons(8, Empty)))
-    )(_ + _).toList == List(5, 8, 11))
-    assert(cons(1, cons(2, cons(3, Empty))).zipWith(
-      cons(4, cons(6, Empty))
-    )(_ + _).toList == List(5, 8))
-    assert(cons(1, cons(2, Empty)).zipWith(
-      cons(4, cons(6, cons(8, Empty)))
-    )(_ + _).toList == List(5, 8))
+    assert(Stream(1, 2, 3).zipWith(Stream(4, 6, 8))(_ + _).toList == List(5, 8, 11))
+    assert(Stream(1, 2, 3).zipWith(Stream(4, 6))(_ + _).toList == List(5, 8))
+    assert(Stream(1, 2).zipWith(Stream(4, 6, 8))(_ + _).toList == List(5, 8))
   }
 }
 
 object TestZipAll {
 
   def main(args: Array[String]): Unit = {
-    assert(cons(1, cons(2, cons(3, Empty))).zipAll(
-      cons(4, cons(6, cons(8, Empty)))
-    ).toList == List((Some(1), Some(4)), (Some(2), Some(6)), (Some(3), Some(8))))
-
-    assert(cons(1, cons(2, Empty)).zipAll(
-      cons(4, cons(6, cons(8, Empty)))
-    ).toList == List((Some(1), Some(4)), (Some(2), Some(6)), (None, Some(8))))
-
-    assert(cons(1, cons(2, cons(3, Empty))).zipAll(
-      cons(4, cons(6, Empty))
-    ).toList == List((Some(1), Some(4)), (Some(2), Some(6)), (Some(3), None)))
+    assert(Stream(1, 2, 3).zipAll(Stream(4, 6, 8)).toList == List((Some(1), Some(4)), (Some(2), Some(6)), (Some(3), Some(8))))
+    assert(Stream(1, 2).zipAll(Stream(4, 6, 8)).toList == List((Some(1), Some(4)), (Some(2), Some(6)), (None, Some(8))))
+    assert(Stream(1, 2, 3).zipAll(Stream(4, 6)).toList == List((Some(1), Some(4)), (Some(2), Some(6)), (Some(3), None)))
   }
 }
 
