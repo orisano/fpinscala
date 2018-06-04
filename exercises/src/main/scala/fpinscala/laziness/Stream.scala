@@ -113,9 +113,9 @@ object TestDrop {
 object TestTakeWhile {
 
   def main(args: Array[String]): Unit = {
-    assert(cons(1, cons(2, cons(3, Empty))).takeWhile(x => x < 3).toList == List(1, 2))
-    assert(cons(1, cons(2, cons(3, Empty))).takeWhile(x => x < 4).toList == List(1, 2, 3))
-    assert(cons(1, cons(2, cons(3, Empty))).takeWhile(x => x < 0).toList == Nil)
+    assert(Stream(1, 2, 3).takeWhile(x => x < 3).toList == List(1, 2))
+    assert(Stream(1, 2, 3).takeWhile(x => x < 4).toList == List(1, 2, 3))
+    assert(Stream(1, 2, 3).takeWhile(x => x < 0).toList == Nil)
   }
 }
 
