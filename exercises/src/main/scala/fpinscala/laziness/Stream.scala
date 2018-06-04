@@ -83,7 +83,9 @@ trait Stream[+A] {
     case (Cons(ah, at), Cons(bh, bt)) => Some(((Some(ah()), Some(bh())), (at(), bt())))
   }
 
-  def startsWith[B](s: Stream[B]): Boolean = ???
+  def startsWith[B](s: Stream[B]): Boolean = zipAll(s).takeWhile(_._2.isDefined).forAll {
+    case (a, b) => a == b
+  }
 }
 
 case object Empty extends Stream[Nothing]
@@ -227,6 +229,14 @@ object TestZipAll {
     assert(cons(1, cons(2, cons(3, Empty))).zipAll(
       cons(4, cons(6, Empty))
     ).toList == List((Some(1), Some(4)), (Some(2), Some(6)), (Some(3), None)))
+  }
+}
+
+object TestStartsWith {
+  def main(args: Array[String]): Unit = {
+    assert(Stream(1, 2, 3) startsWith Stream(1, 2))
+    assert(!Stream(1, 2, 3).startsWith(Stream(1, 2, 3, 4)))
+    assert(!Stream(1, 2, 3).startsWith(Stream(1, 1)))
   }
 }
 
