@@ -86,6 +86,11 @@ trait Stream[+A] {
   def startsWith[B](s: Stream[B]): Boolean = zipAll(s).takeWhile(_._2.isDefined).forAll {
     case (a, b) => a == b
   }
+
+  def tails: Stream[Stream[A]] = unfold(this) {
+    case Empty => None
+    case s => Some((s, s.drop(1)))
+  }.append(Stream(Empty))
 }
 
 case object Empty extends Stream[Nothing]
@@ -223,6 +228,13 @@ object TestStartsWith {
     assert(Stream(1, 2, 3) startsWith Stream(1, 2))
     assert(!Stream(1, 2, 3).startsWith(Stream(1, 2, 3, 4)))
     assert(!Stream(1, 2, 3).startsWith(Stream(1, 1)))
+  }
+}
+
+object TestTails {
+
+  def main(args: Array[String]): Unit = {
+    assert(Stream(1, 2, 3).tails.toList.map(_.toList) == List(List(1, 2, 3), List(2, 3), List(3), List()))
   }
 }
 
