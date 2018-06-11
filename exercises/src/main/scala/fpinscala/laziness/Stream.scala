@@ -91,6 +91,12 @@ trait Stream[+A] {
     case Empty => None
     case s => Some((s, s.drop(1)))
   }.append(Stream(Empty))
+
+  def scanRight[B](z: B)(f: (A, => B) => B): Stream[B] = foldRight((z, Stream(z)))((a, p0) => {
+    lazy val p1 = p0
+    val b2 = f(a, p1._1)
+    (b2, cons(b2, p1._2))
+  })._2
 }
 
 case object Empty extends Stream[Nothing]
@@ -235,6 +241,12 @@ object TestTails {
 
   def main(args: Array[String]): Unit = {
     assert(Stream(1, 2, 3).tails.toList.map(_.toList) == List(List(1, 2, 3), List(2, 3), List(3), List()))
+  }
+}
+
+object TestScanRight {
+  def main(args: Array[String]): Unit = {
+    assert(Stream(1, 2, 3).scanRight(0)(_ + _).toList == List(6, 5, 3, 0))
   }
 }
 
