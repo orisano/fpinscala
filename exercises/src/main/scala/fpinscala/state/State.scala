@@ -65,6 +65,8 @@ object RNG {
     (i :: x, r2)
   } else (List.empty, rng)
 
+  def double2(rng: RNG): Rand[Double] = map(RNG.nonNegativeInt)(_ / Int.MaxValue.toDouble + 1)
+
   def map2[A,B,C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = ???
 
   def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = ???
